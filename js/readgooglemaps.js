@@ -15,9 +15,19 @@ function loadJSON(callback) {
 
 function viewJSON() {
     loadJSON(function(response) {
-        /* Aqui l'objecte response representa l'objecte JSON que ens 
-           ha retornat el servidor */
-        document.getElementById("results").innerHTML = response.results[0].name;
+        var str ='<br><div class="container" align="center" style="background-color:white;"><br><!-- Definim taula en format de  "Hoverable rows" de Bootstrap --><table class="table table-hover" style="width:auto"><thead><tr><th>#</th><th>Nom</th><th>Adreça</th><th>Latitud</th><th>Longitud</th><th>Tipus establiment</th><th>Icona</th></th></tr></thead>';
+        for (var i=0; i<response.results.length;i++){
+            
+            str+='<tr><td>'+
+            (i+1)+
+            '.</td><td>'+
+            response.results[i].name+'</td><td>'+response.results[i].vicinity+'</td><td>'+response.results[i].geometry.location.lat.toFixed(6)+'</td><td>'+response.results[i].geometry.location.lng.toFixed(6)+'</td><td><ul>';
+            str=listTypes(response, str, i)+'</ul></td><td><img src='+response.results[i].icon+'></td></tr>';
+            
+        }
+        str+='</table></div>';
+        console.log(str);
+        document.getElementById("results").innerHTML =str;
     });
 }
 
@@ -29,16 +39,15 @@ function listTypes(response, str, x){
 }
 
 function webConstructor(){
-    loadJSON(function(response) {
-    var str ='<div class="container" align="center"><br><!-- Definim taula en format de  "Hoverable rows" de Bootstrap --><table class="table table-hover" style="width:auto"><thead><tr><th>#</th><th>Nom</th><th>Adreça</th><th>Latitud</th><th>Longitud</th><th>Tipus establiment</th><th>Icona</th></th></tr></thead>';
-    for (var i=0; i<response.results.length;i++){
-        
-        str+='<tr><td>'+(i+1)+'.</td><td>'+response.results[i].name+'</td><td>'+response.results[i].vicinity+'</td><td>'+response.results[i].geometry.location.lat.toFixed(6)+'</td><td>'+response.results[i].geometry.location.lng.toFixed(6)+'</td><td><ul>';
-        str=listTypes(response, str, i)+'</ul></td><td><img src='+response.results[i].icon+'></td></tr>';
-          
+    if (document.getElementById('viewBtn').getAttribute("value")=="Veure Restaurants"){
+        document.getElementById('viewBtn').value='No veure Restaurants';
+        viewJSON();
+    }else {
+        webClear();
     }
-    str+='</table></div>';
-    console.log(str);
-    document.getElementById("results").innerHTML =str;
-});
+}
+
+function webClear(){
+    document.getElementById('viewBtn').value='Veure Restaurants';
+    document.getElementById("results").innerHTML ="";
 }
